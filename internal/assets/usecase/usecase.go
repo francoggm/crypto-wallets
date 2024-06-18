@@ -1,12 +1,14 @@
 package usecase
 
-import "github/francoggm/crypto-wallets/internal/assets/repository"
+import (
+	"github/francoggm/crypto-wallets/internal/assets"
+)
 
 type AssetsUseCase struct {
-	repo *repository.AssetsRepository
+	repo assets.Repository
 }
 
-func NewUseCase(repo *repository.AssetsRepository) *AssetsUseCase {
+func NewUseCase(repo assets.Repository) assets.UseCase {
 	return &AssetsUseCase{
 		repo,
 	}
