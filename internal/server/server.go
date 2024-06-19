@@ -10,7 +10,7 @@ import (
 type Server struct {
 	cfg *config.Config
 	app *fiber.App
-	db *sqlx.DB
+	db  *sqlx.DB
 }
 
 func NewServer(cfg *config.Config, db *sqlx.DB) *Server {
@@ -25,5 +25,5 @@ func (s *Server) Run() error {
 	gp := s.app.Group("/v1")
 	s.MapHandlers(gp)
 
-	return s.app.Listen(":8080")
+	return s.app.Listen(":" + s.cfg.Port)
 }

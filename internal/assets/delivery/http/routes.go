@@ -7,6 +7,6 @@ import (
 )
 
 func MapRoutes(gp fiber.Router, handlers assets.Handlers) {
-	gp.Get("/all", handlers.ListAllAssetsData())
+	gp.Get("/", handlers.ListAllAssetsData())
 	gp.Get("/:asset", handlers.ListAssetData())
 }

@@ -8,7 +8,9 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS assets (
   id SERIAL PRIMARY KEY,
   name VARCHAR(150) NOT NULL,
-  symbol VARCHAR(20) NOT NULL UNIQUE
+  symbol VARCHAR(20) NOT NULL UNIQUE,
+  search_name VARCHAR(150) NOT NULL,
+  image_url VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS wallets (
@@ -44,3 +46,16 @@ CREATE TABLE IF NOT EXISTS tickers (
 
   CONSTRAINT fk_asset_ticker FOREIGN KEY (asset_id) REFERENCES assets(id)
 );
+
+INSERT INTO assets (name, symbol, search_name, image_url)
+VALUES 
+('Bitcoin', 'BTC', 'bitcoin', 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png'),
+('Ethereum', 'ETH', 'ethereum', 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png'),
+('Tether', 'USDT', 'tether', 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png'),
+('Solana', 'SOL', 'solana', 'https://s2.coinmarketcap.com/static/img/coins/64x64/5426.png'),
+('XRP', 'XRP', 'ripple', 'https://s2.coinmarketcap.com/static/img/coins/64x64/52.png'),
+('Dogecoin', 'DOGE', 'dogecoin', 'https://s2.coinmarketcap.com/static/img/coins/64x64/74.png'),
+('Cardano', 'ADA', 'cardano', 'https://s2.coinmarketcap.com/static/img/coins/64x64/2010.png'),
+('Shiba Inu', 'SHIB', 'shiba-inu', 'https://s2.coinmarketcap.com/static/img/coins/64x64/5994.png'),
+('Avalanche', 'AVAX', 'avalanche', 'https://s2.coinmarketcap.com/static/img/coins/64x64/5994.png'),
+('TRON', 'TRX', 'tron', 'https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png');
