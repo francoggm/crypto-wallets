@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS wallets (
   id SERIAL PRIMARY KEY,
   user_id INT NOT NULL,
   asset_id INT NOT NULL,
-  quantity DECIMAL(18, 8) NOT NULL DEFAULT 0,
+  quantity DECIMAL(40, 25) NOT NULL DEFAULT 0,
 
   CONSTRAINT fk_user_wallet FOREIGN KEY (user_id) REFERENCES users(id),
   CONSTRAINT fk_asset_wallet FOREIGN KEY (asset_id) REFERENCES assets(id),
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   user_id INT NOT NULL,
   asset_id INT NOT NULL,
   transaction_type VARCHAR(10) NOT NULL CHECK (transaction_type in ('buy', 'sell')),
-  amount DECIMAL(18, 8) NOT NULL,
+  amount DECIMAL(40, 25) NOT NULL,
   transaction_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
   CONSTRAINT fk_user_wallet FOREIGN KEY (user_id) REFERENCES users(id),
@@ -39,9 +39,9 @@ CREATE TABLE IF NOT EXISTS transactions (
 CREATE TABLE IF NOT EXISTS tickers (
   id SERIAL PRIMARY KEY,
   asset_id INT NOT NULL,
-  price_usd DECIMAL(18, 8) NOT NULL,
-  marketcap_usd DECIMAL(18, 8) NOT NULL,
-  volume_usd DECIMAL(18, 8) NOT NULL,
+  price_usd DECIMAL(40, 25) NOT NULL,
+  marketcap_usd DECIMAL(40, 25) NOT NULL,
+  volume_usd DECIMAL(40, 25) NOT NULL,
   ticker_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
   CONSTRAINT fk_asset_ticker FOREIGN KEY (asset_id) REFERENCES assets(id)

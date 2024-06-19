@@ -1,8 +1,11 @@
 package assets
 
-import "github/francoggm/crypto-wallets/internal/models"
+import (
+	"context"
+	"github/francoggm/crypto-wallets/internal/models"
+)
 
 type UseCase interface {
-	ListAllAssetsData() ([]*models.AssetTicker, error)
-	ListAssetData(assetName string) (*models.AssetTicker, error)
+	ListAllAssetsData(ctx context.Context) ([]*models.AssetTicker, error)
+	ListAssetData(ctx context.Context, assetName string) (*models.AssetTicker, error)
 }

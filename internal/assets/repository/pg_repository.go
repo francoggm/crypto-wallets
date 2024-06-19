@@ -1,11 +1,13 @@
 package repository
 
 import (
+	"context"
 	"github/francoggm/crypto-wallets/internal/assets"
 	"github/francoggm/crypto-wallets/internal/models"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/opentracing/opentracing-go"
 )
 
 type assetsRepository struct {
@@ -18,33 +20,50 @@ func NewRepository(db *sqlx.DB) assets.Repository {
 	}
 }
 
-func (r *assetsRepository) GetAllAssets() ([]*models.Asset, error) {
+func (r *assetsRepository) GetAllAssets(ctx context.Context) ([]*models.Asset, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "assets.repository.GetAllAssets")
+	defer span.Finish()
+
 	var assets []*models.Asset
 
-	if err := r.db.Select(&assets, getAllAssets); err != nil {
+	if err := r.db.SelectContext(ctx, &assets, getAllAssets); err != nil {
 		return nil, err
 	}
 
 	return assets, nil
 }
 
-func (r *assetsRepository) GetAsset(assetName string) (*models.Asset, error) {
+func (r *assetsRepository) GetAsset(ctx context.Context, assetName string) (*models.Asset, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "assets.repository.GetAsset")
+	defer span.Finish()
+
 	var asset models.Asset
 
-	if err := r.db.Get(&asset, getAsset, assetName, strings.ToLower(assetName), strings.ToUpper(assetName)); err != nil {
+	if err := r.db.GetContext(ctx, &asset, getAsset, assetName, strings.ToLower(assetName), strings.ToUpper(assetName)); err != nil {
 		return nil, err
 	}
 
 	return &asset, nil
 }
 
-func (r *assetsRepository) GetAssetTicker(asset models.Asset) (*models.AssetTicker, error) {
-	var at models.AssetTicker
-	at.Asset = asset
+func (r *assetsRepository) GetAssetTicker(ctx context.Context, asset *models.Asset) (*models.AssetTicker, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "assets.repository.GetAssetTicker")
+	defer span.Finish()
 
-	if err := r.db.Get(&at, getAssetTicker, at.Id); err != nil {
+	var at models.AssetTicker
+	at.Asset = *asset
+
+	if err := r.db.GetContext(ctx, &at, getAssetTicker, at.Id); err != nil {
 		return nil, err
 	}
 
 	return &at, nil
+}
+
+func (r *assetsRepository) SaveAssetTicker(ctx context.Context, assetTicker *models.AssetTicker) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "assets.repository.SaveAssetTicker")
+	defer span.Finish()
+
+	_, err := r.db.NamedExecContext(ctx, saveAssetTicker, &assetTicker)
+	return err
 }

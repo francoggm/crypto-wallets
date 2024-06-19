@@ -6,7 +6,7 @@ require (
 	github.com/gofiber/fiber/v3 v3.0.0-beta.2
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/lib/pq v1.10.9
-	golang.org/x/text v0.14.0
+	github.com/opentracing/opentracing-go v1.2.0
 )
 
 require (

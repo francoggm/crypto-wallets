@@ -12,6 +12,8 @@ services:
     restart: always
     environment:
       - PORT=8080
+      - TICKERS_INTERVAL_SECONDS=300
+      - TICKERS_URL=https://api.coincap.io/v2/assets
       - DBUSER=postgres
       - DBPASSWORD=password
       - DBHOST=database
