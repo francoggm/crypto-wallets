@@ -52,11 +52,15 @@ func (tr *TickersRoutine) tickersRoutine() {
 	}
 
 	for _, at := range assetsTickers {
-		go func(ctx context.Context, assetTicker models.AssetTicker) {
+		// prevent concurrency
+		go func(assetTicker models.AssetTicker) {
+			ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+
 			if err := tr.Repository.SaveAssetTicker(ctx, &assetTicker); err != nil {
 				log.Error(err)
 			}
-		}(ctx, *at)
+		}(*at)
 	}
 }
 
