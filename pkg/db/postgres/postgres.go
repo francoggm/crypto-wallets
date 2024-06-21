@@ -10,11 +10,11 @@ import (
 
 func NewPostgres(cfg *config.Config) (*sqlx.DB, error) {
 	uri := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
-		cfg.DBHost,
-		cfg.DBPort,
-		cfg.DBUser,
-		cfg.DBName,
-		cfg.DBPassword,
+		cfg.DB.Host,
+		cfg.DB.Port,
+		cfg.DB.User,
+		cfg.DB.Name,
+		cfg.DB.Password,
 	)
 
 	db, err := sqlx.Connect("postgres", uri)

@@ -27,46 +27,48 @@ type TickerDataList struct {
 }
 
 func (tr *TickersRoutine) GetTickersData() {
-	for {
-		ctx := context.Background()
+	tc := time.NewTicker(tr.TickersInterval)
+	defer tc.Stop()
 
-		assets, err := tr.Repository.GetAllAssets(ctx)
-		if err != nil {
-			log.Error(err)
-			time.Sleep(30 * time.Second)
-
-			continue
-		}
-
-		assetsTickers, err := getAssetsTickers(tr.TickersURL, assets)
-		if err != nil {
-			log.Error(err)
-			time.Sleep(30 * time.Second)
-
-			continue
-		}
-
-		for _, at := range assetsTickers {
-			go func(assetTicker *models.AssetTicker) {
-				if err := tr.Repository.SaveAssetTicker(ctx, assetTicker); err != nil {
-					log.Error(err)
-				}
-			}(at)
-		}
-
-		time.Sleep(tr.TickersInterval)
+	for range tc.C {
+		tr.tickersRoutine()
 	}
 }
 
-func getAssetsTickers(url string, assets []*models.Asset) ([]*models.AssetTicker, error) {
-	tl, err := makeTickersRequest(url, utils.GetAssetsListQueryParam(assets))
+func (tr *TickersRoutine) tickersRoutine() {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	assets, err := tr.Repository.GetAllAssets(ctx)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	assetsTickers, err := getAssetsTickers(ctx, tr.TickersURL, assets)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	for _, at := range assetsTickers {
+		go func(ctx context.Context, assetTicker models.AssetTicker) {
+			if err := tr.Repository.SaveAssetTicker(ctx, &assetTicker); err != nil {
+				log.Error(err)
+			}
+		}(ctx, *at)
+	}
+}
+
+func getAssetsTickers(ctx context.Context, url string, assets []*models.Asset) ([]*models.AssetTicker, error) {
+	tdl, err := makeTickersRequest(ctx, url, utils.GetAssetsListQueryParam(assets))
 	if err != nil {
 		return nil, err
 	}
 
-	assetsTickers := make([]*models.AssetTicker, 0, len(tl.Data))
+	assetsTickers := make([]*models.AssetTicker, 0, len(tdl.Data))
 
-	for _, ticker := range tl.Data {
+	for _, ticker := range tdl.Data {
 		asset := utils.GetAssetFromAssets(assets, ticker.SearchName, ticker.Name, ticker.Symbol)
 		if asset == nil {
 			continue
@@ -100,8 +102,8 @@ func getAssetsTickers(url string, assets []*models.Asset) ([]*models.AssetTicker
 	return assetsTickers, nil
 }
 
-func makeTickersRequest(url, assetsQueryParam string) (*TickerDataList, error) {
-	req, err := http.NewRequest("GET", url, nil)
+func makeTickersRequest(ctx context.Context, url, assetsQueryParam string) (*TickerDataList, error) {
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -111,22 +113,22 @@ func makeTickersRequest(url, assetsQueryParam string) (*TickerDataList, error) {
 
 	req.URL.RawQuery = q.Encode()
 
-	client := &http.Client{}
+	client := &http.Client{Timeout: 30 * time.Second}
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	responseBody, err := io.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	var tl *TickerDataList
-	if err := json.Unmarshal(responseBody, &tl); err != nil {
+	var tdl TickerDataList
+	if err := json.Unmarshal(body, &tdl); err != nil {
 		return nil, err
 	}
 
-	return tl, nil
+	return &tdl, nil
 }

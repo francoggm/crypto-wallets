@@ -25,5 +25,5 @@ func (s *Server) Run() error {
 	gp := s.app.Group("/v1")
 	s.MapHandlers(gp)
 
-	return s.app.Listen(":" + s.cfg.Port)
+	return s.app.Listen(":" + s.cfg.Server.Port)
 }

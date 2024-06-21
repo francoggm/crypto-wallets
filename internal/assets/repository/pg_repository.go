@@ -53,7 +53,7 @@ func (r *assetsRepository) GetAssetTicker(ctx context.Context, asset *models.Ass
 	var at models.AssetTicker
 	at.Asset = *asset
 
-	if err := r.db.GetContext(ctx, &at, getAssetTicker, at.Id); err != nil {
+	if err := r.db.GetContext(ctx, &at, getAssetTicker, at.ID); err != nil {
 		return nil, err
 	}
 
@@ -64,6 +64,6 @@ func (r *assetsRepository) SaveAssetTicker(ctx context.Context, assetTicker *mod
 	span, ctx := opentracing.StartSpanFromContext(ctx, "assets.repository.SaveAssetTicker")
 	defer span.Finish()
 
-	_, err := r.db.NamedExecContext(ctx, saveAssetTicker, &assetTicker)
+	_, err := r.db.NamedExecContext(ctx, insertAssetTicker, &assetTicker)
 	return err
 }

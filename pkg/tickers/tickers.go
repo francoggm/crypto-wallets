@@ -19,8 +19,8 @@ func NewTickersRoutine(cfg *config.Config, db *sqlx.DB) *TickersRoutine {
 	repo := repository.NewRepository(db)
 
 	return &TickersRoutine{
-		TickersInterval: time.Duration(cfg.TickersInterval) * time.Second,
-		TickersURL:      cfg.TickersURL,
+		TickersInterval: time.Duration(cfg.Tickers.Interval) * time.Second,
+		TickersURL:      cfg.Tickers.URL,
 		Repository:      repo,
 	}
 }

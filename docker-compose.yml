@@ -11,14 +11,16 @@ services:
       - database
     restart: always
     environment:
-      - PORT=8080
+      - SERVER_PORT=8080
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_NAME=crypto-wallets
       - TICKERS_INTERVAL_SECONDS=300
       - TICKERS_URL=https://api.coincap.io/v2/assets
-      - DBUSER=postgres
-      - DBPASSWORD=password
-      - DBHOST=database
-      - DBPORT=5432
-      - DBNAME=crypto-wallets
+      - TOKEN_EXPIRATION=24
+      - TOKEN_SECRET_KEY=
 
   database:
     image: postgres:latest

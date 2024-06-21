@@ -15,7 +15,7 @@ type assetsUseCase struct {
 
 func NewUseCase(repo assets.Repository) assets.UseCase {
 	return &assetsUseCase{
-		repo,
+		repo: repo,
 	}
 }
 

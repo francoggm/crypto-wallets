@@ -3,7 +3,7 @@ package models
 import "time"
 
 type Asset struct {
-	Id         int    `json:"id" db:"id"`
+	ID         int    `json:"id" db:"id"`
 	Name       string `json:"name" db:"name"`
 	Symbol     string `json:"symbol" db:"symbol"`
 	SearchName string `json:"-" db:"search_name"`

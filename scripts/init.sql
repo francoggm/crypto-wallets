@@ -2,7 +2,11 @@ CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
   username VARCHAR(100) NOT NULL,
   email VARCHAR(200) NOT NULL UNIQUE,
-  password VARCHAR(255) NOT NULL
+  password VARCHAR(255) NOT NULL,
+  role VARCHAR(20) NOT NULL DEFAULT 'user' CHECK (role in ('admin', 'user', 'corporate')),
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  last_login TIMESTAMP(0) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS assets (
@@ -18,6 +22,8 @@ CREATE TABLE IF NOT EXISTS wallets (
   user_id INT NOT NULL,
   asset_id INT NOT NULL,
   quantity DECIMAL(40, 25) NOT NULL DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
   CONSTRAINT fk_user_wallet FOREIGN KEY (user_id) REFERENCES users(id),
   CONSTRAINT fk_asset_wallet FOREIGN KEY (asset_id) REFERENCES assets(id),
@@ -30,7 +36,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   asset_id INT NOT NULL,
   transaction_type VARCHAR(10) NOT NULL CHECK (transaction_type in ('buy', 'sell')),
   amount DECIMAL(40, 25) NOT NULL,
-  transaction_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  transaction_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
   CONSTRAINT fk_user_wallet FOREIGN KEY (user_id) REFERENCES users(id),
   CONSTRAINT fk_asset_wallet FOREIGN KEY (asset_id) REFERENCES assets(id)
@@ -42,7 +48,7 @@ CREATE TABLE IF NOT EXISTS tickers (
   price_usd DECIMAL(40, 25) NOT NULL,
   marketcap_usd DECIMAL(40, 25) NOT NULL,
   volume_usd DECIMAL(40, 25) NOT NULL,
-  ticker_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  ticker_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
   CONSTRAINT fk_asset_ticker FOREIGN KEY (asset_id) REFERENCES assets(id)
 );
@@ -53,7 +59,7 @@ VALUES
 ('Ethereum', 'ETH', 'ethereum', 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png'),
 ('Tether', 'USDT', 'tether', 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png'),
 ('Solana', 'SOL', 'solana', 'https://s2.coinmarketcap.com/static/img/coins/64x64/5426.png'),
-('XRP', 'XRP', 'ripple', 'https://s2.coinmarketcap.com/static/img/coins/64x64/52.png'),
+('XRP', 'XRP', 'xrp', 'https://s2.coinmarketcap.com/static/img/coins/64x64/52.png'),
 ('Dogecoin', 'DOGE', 'dogecoin', 'https://s2.coinmarketcap.com/static/img/coins/64x64/74.png'),
 ('Cardano', 'ADA', 'cardano', 'https://s2.coinmarketcap.com/static/img/coins/64x64/2010.png'),
 ('Shiba Inu', 'SHIB', 'shiba-inu', 'https://s2.coinmarketcap.com/static/img/coins/64x64/5994.png'),

@@ -4,6 +4,11 @@ up-services:
 down-services:
 	docker-compose down
 
+reset-db:
+	make down-services
+	rm -rf dbdata
+	make up-services
+
 # Go commands
 run:
 	go run ./cmd/api/main.go

@@ -4,9 +4,11 @@ go 1.21.0
 
 require (
 	github.com/gofiber/fiber/v3 v3.0.0-beta.2
+	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/lib/pq v1.10.9
 	github.com/opentracing/opentracing-go v1.2.0
+	golang.org/x/crypto v0.19.0
 )
 
 require (

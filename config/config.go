@@ -5,39 +5,68 @@ import (
 	"strconv"
 )
 
+type Server struct {
+	Port string
+}
+
 type DB struct {
-	DBUser     string
-	DBPassword string
-	DBHost     string
-	DBPort     string
-	DBName     string
+	User     string
+	Password string
+	Host     string
+	Port     string
+	Name     string
+}
+
+type Tickers struct {
+	Interval int
+	URL      string
+}
+
+type Token struct {
+	Expiration int
+	SecretKey  string
 }
 
 type Config struct {
+	Server
 	DB
-	Port            string
-	TickersInterval int
-	TickersURL      string
+	Tickers
+	Token
 }
 
 func NewConfig() *Config {
-	tsEnv := os.Getenv("TICKERS_INTERVAL_SECONDS")
-	ts, err := strconv.Atoi(tsEnv)
+	tiEnv := os.Getenv("TICKERS_INTERVAL")
+	ti, err := strconv.Atoi(tiEnv)
 	if err != nil {
 		// default value = 5 minutes
-		ts = 300
+		ti = 300
+	}
+
+	teEnv := os.Getenv("TOKEN_EXPIRATION")
+	te, err := strconv.Atoi(teEnv)
+	if err != nil {
+		// default value = 24 hours
+		te = 24
 	}
 
 	return &Config{
-		Port:            os.Getenv("PORT"),
-		TickersInterval: ts,
-		TickersURL:      os.Getenv("TICKERS_URL"),
+		Server: Server{
+			Port: os.Getenv("SERVER_PORT"),
+		},
 		DB: DB{
-			DBUser:     os.Getenv("DBUSER"),
-			DBPassword: os.Getenv("DBPASSWORD"),
-			DBHost:     os.Getenv("DBHOST"),
-			DBPort:     os.Getenv("DBPORT"),
-			DBName:     os.Getenv("DBNAME"),
+			User:     os.Getenv("DB_USER"),
+			Password: os.Getenv("DB_PASSWORD"),
+			Host:     os.Getenv("DB_HOST"),
+			Port:     os.Getenv("DB_PORT"),
+			Name:     os.Getenv("DB_NAME"),
+		},
+		Tickers: Tickers{
+			Interval: ti,
+			URL:      os.Getenv("TICKERS_URL"),
+		},
+		Token: Token{
+			Expiration: te,
+			SecretKey:  os.Getenv("TOKEN_SECRET_KEY"),
 		},
 	}
 }
