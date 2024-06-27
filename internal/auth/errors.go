@@ -3,18 +3,18 @@ package auth
 import "errors"
 
 var (
-	InvalidBody            = "Invalid body fields"
-	EmailAlreadyRegistered = "Email already registered"
-	FailCreatingUser       = "Failed to create user"
-	InvalidUsername        = "Invalid username"
-	InvalidEmail           = "Invalid e-mail"
-	InvalidPassword        = "Invalid password"
-	InvalidCredentials     = "Invalid credentials"
-	FailInLogin            = "Failed in login"
-	FailGettingUserInfos   = "Failed getting user informations"
+	InvalidBody            = "Invalid body fields!"
+	EmailAlreadyRegistered = "Email already registered!"
+	FailCreatingUser       = "Failed to create user!"
+	InvalidUsername        = "Invalid username!"
+	InvalidEmail           = "Invalid e-mail!"
+	InvalidPassword        = "Invalid password!"
+	InvalidCredentials     = "Invalid credentials!"
+	FailInLogin            = "Failed in login!"
+	FailGettingUserInfos   = "Failed getting user informations!"
 	UserNotLogged          = "User is not logged!"
-	TokenNotValid          = "Token JWT is not valid"
-	InvalidPermission      = "User dont have permission to access"
+	TokenNotValid          = "Token JWT is not valid!"
+	InvalidPermission      = "User don't have permission to access!"
 )
 
 var (

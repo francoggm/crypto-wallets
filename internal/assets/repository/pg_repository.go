@@ -33,13 +33,26 @@ func (r *assetsRepository) GetAllAssets(ctx context.Context) ([]*models.Asset, e
 	return assets, nil
 }
 
-func (r *assetsRepository) GetAsset(ctx context.Context, assetName string) (*models.Asset, error) {
+func (r *assetsRepository) GetAssetByID(ctx context.Context, assetId int) (*models.Asset, error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "assets.repository.GetAsset")
 	defer span.Finish()
 
 	var asset models.Asset
 
-	if err := r.db.GetContext(ctx, &asset, getAsset, assetName, strings.ToLower(assetName), strings.ToUpper(assetName)); err != nil {
+	if err := r.db.GetContext(ctx, &asset, getAssetByID, assetId); err != nil {
+		return nil, err
+	}
+
+	return &asset, nil
+}
+
+func (r *assetsRepository) GetAssetByName(ctx context.Context, assetName string) (*models.Asset, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "assets.repository.GetAsset")
+	defer span.Finish()
+
+	var asset models.Asset
+
+	if err := r.db.GetContext(ctx, &asset, getAssetByName, assetName, strings.ToLower(assetName), strings.ToUpper(assetName)); err != nil {
 		return nil, err
 	}
 

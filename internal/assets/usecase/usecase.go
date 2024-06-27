@@ -47,7 +47,7 @@ func (uc *assetsUseCase) ListAssetData(ctx context.Context, assetName string) (*
 	span, ctx := opentracing.StartSpanFromContext(ctx, "assets.usecase.ListAssetData")
 	defer span.Finish()
 
-	asset, err := uc.repo.GetAsset(ctx, assetName)
+	asset, err := uc.repo.GetAssetByName(ctx, assetName)
 	if err != nil {
 		return nil, err
 	}

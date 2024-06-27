@@ -13,6 +13,7 @@ type User struct {
 	Email     string    `json:"email" db:"email"`
 	Password  string    `json:"password,omitempty" db:"password"`
 	Role      string    `json:"role" db:"role"`
+	WalletUSD float64   `json:"wallet_usd" db:"wallet_usd"`
 	CreatedAt time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 	LastLogin time.Time `json:"last_login" db:"last_login"`

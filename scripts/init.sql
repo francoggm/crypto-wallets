@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
   email VARCHAR(200) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
   role VARCHAR(20) NOT NULL DEFAULT 'user' CHECK (role in ('admin', 'user', 'corporate')),
+  wallet_usd DOUBLE PRECISION DEFAULT 5000,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   last_login TIMESTAMP(0) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -36,6 +37,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   asset_id INT NOT NULL,
   transaction_type VARCHAR(10) NOT NULL CHECK (transaction_type in ('buy', 'sell')),
   amount DECIMAL(40, 25) NOT NULL,
+  asset_price DECIMAL(40, 25) NOT NULL,
   transaction_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
   CONSTRAINT fk_user_wallet FOREIGN KEY (user_id) REFERENCES users(id),

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github/francoggm/crypto-wallets/config"
 	"github/francoggm/crypto-wallets/internal/assets"
+	"github/francoggm/crypto-wallets/pkg/utils"
 	"net/http"
 
 	"github.com/gofiber/fiber/v3"
@@ -36,9 +37,7 @@ func (h assetsHandlers) ListAllAssetsData() fiber.Handler {
 		}
 
 		if len(assetsTickers) == 0 {
-			return c.Status(http.StatusBadRequest).JSON(map[string]string{
-				"message": "Error getting tickers, try again!",
-			})
+			return c.Status(http.StatusBadRequest).JSON(utils.GetMessageError(assets.ErrFailedGettingTicker))
 		}
 
 		return c.JSON(assetsTickers)
@@ -52,9 +51,7 @@ func (h assetsHandlers) ListAssetData() fiber.Handler {
 
 		assetName := c.Params("asset")
 		if assetName == "" {
-			return c.Status(http.StatusUnprocessableEntity).JSON(map[string]string{
-				"message": "Invalid asset",
-			})
+			return c.Status(http.StatusUnprocessableEntity).JSON(utils.GetMessageError(assets.ErrInvalidAsset))
 		}
 
 		assetTicker, err := h.uc.ListAssetData(ctx, assetName)
@@ -65,9 +62,7 @@ func (h assetsHandlers) ListAssetData() fiber.Handler {
 				return c.Status(http.StatusNotFound).Send(nil)
 			}
 
-			return c.Status(http.StatusBadRequest).JSON(map[string]string{
-				"message": "Error getting ticker, try again!",
-			})
+			return c.Status(http.StatusBadRequest).JSON(utils.GetMessageError(assets.ErrFailedGettingTicker))
 		}
 
 		return c.JSON(assetTicker)

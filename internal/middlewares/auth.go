@@ -35,11 +35,11 @@ func (mw *MiddlewareManager) AuthMiddleware(c fiber.Ctx) error {
 func (mw *MiddlewareManager) AdminMiddleware(c fiber.Ctx) error {
 	user, ok := c.Locals("user").(*models.User)
 	if !ok {
-		return c.Status(http.StatusForbidden).JSON(utils.GetMessageError(auth.ErrInvalidPermission))
+		return c.Status(http.StatusUnauthorized).JSON(utils.GetMessageError(auth.ErrInvalidPermission))
 	}
 
 	if !user.IsAdmin() {
-		return c.Status(http.StatusForbidden).JSON(utils.GetMessageError(auth.ErrInvalidPermission))
+		return c.Status(http.StatusUnauthorized).JSON(utils.GetMessageError(auth.ErrInvalidPermission))
 	}
 
 	return c.Next()
