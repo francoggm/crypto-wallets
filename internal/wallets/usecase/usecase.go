@@ -47,7 +47,7 @@ func (uc *walletsUseCase) GetUserWallets(ctx context.Context, userId int) ([]*mo
 			continue
 		}
 
-		assetTicker, err := uc.assetsRepo.GetAssetTicker(ctx, asset)
+		ticker, err := uc.assetsRepo.GetAssetTicker(ctx, asset.ID)
 		if err != nil {
 			log.Error(err)
 			continue
@@ -56,9 +56,9 @@ func (uc *walletsUseCase) GetUserWallets(ctx context.Context, userId int) ([]*mo
 		walletTicker := models.WalletTicker{
 			Symbol:    asset.Symbol,
 			Asset:     asset.Name,
-			PriceUSD:  assetTicker.PriceUSD,
+			PriceUSD:  ticker.PriceUSD,
 			Quantity:  wallet.Quantity,
-			TotalUSD:  assetTicker.PriceUSD * wallet.Quantity,
+			TotalUSD:  ticker.PriceUSD * wallet.Quantity,
 			UpdatedAt: wallet.UpdatedAt,
 		}
 
@@ -82,7 +82,7 @@ func (uc *walletsUseCase) GetUserWallet(ctx context.Context, userId int, assetNa
 		return nil, err
 	}
 
-	assetTicker, err := uc.assetsRepo.GetAssetTicker(ctx, asset)
+	ticker, err := uc.assetsRepo.GetAssetTicker(ctx, asset.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -90,9 +90,9 @@ func (uc *walletsUseCase) GetUserWallet(ctx context.Context, userId int, assetNa
 	walletTicker := models.WalletTicker{
 		Symbol:    asset.Symbol,
 		Asset:     asset.Name,
-		PriceUSD:  assetTicker.PriceUSD,
+		PriceUSD:  ticker.PriceUSD,
 		Quantity:  wallet.Quantity,
-		TotalUSD:  assetTicker.PriceUSD * wallet.Quantity,
+		TotalUSD:  ticker.PriceUSD * wallet.Quantity,
 		UpdatedAt: wallet.UpdatedAt,
 	}
 
@@ -108,12 +108,12 @@ func (uc *walletsUseCase) BuyAsset(ctx context.Context, user *models.User, trans
 		return nil, err
 	}
 
-	assetTicker, err := uc.assetsRepo.GetAssetTicker(ctx, asset)
+	ticker, err := uc.assetsRepo.GetAssetTicker(ctx, asset.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	price := transaction.Quantity * assetTicker.PriceUSD
+	price := transaction.Quantity * ticker.PriceUSD
 
 	if price > user.WalletUSD {
 		return nil, wallets.ErrInsufficientAmount
@@ -141,7 +141,7 @@ func (uc *walletsUseCase) BuyAsset(ctx context.Context, user *models.User, trans
 		log.Error(err)
 	}
 
-	err = uc.walletsRepo.CreateTransaction(ctx, user.ID, asset.ID, buyTransaction, transaction.Quantity, assetTicker.PriceUSD)
+	err = uc.walletsRepo.CreateTransaction(ctx, user.ID, asset.ID, buyTransaction, transaction.Quantity, ticker.PriceUSD)
 	if err != nil {
 		log.Error(err)
 	}
@@ -149,7 +149,7 @@ func (uc *walletsUseCase) BuyAsset(ctx context.Context, user *models.User, trans
 	walletTicker := models.WalletTicker{
 		Symbol:    asset.Symbol,
 		Asset:     asset.Name,
-		PriceUSD:  assetTicker.PriceUSD,
+		PriceUSD:  ticker.PriceUSD,
 		Quantity:  transaction.Quantity,
 		TotalUSD:  price,
 		UpdatedAt: wallet.UpdatedAt,
@@ -181,19 +181,19 @@ func (uc *walletsUseCase) SellAsset(ctx context.Context, user *models.User, tran
 		return nil, err
 	}
 
-	assetTicker, err := uc.assetsRepo.GetAssetTicker(ctx, asset)
+	ticker, err := uc.assetsRepo.GetAssetTicker(ctx, asset.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	price := transaction.Quantity * assetTicker.PriceUSD
+	price := transaction.Quantity * ticker.PriceUSD
 
 	err = uc.walletsRepo.UpdateWalletUSD(ctx, user.ID, user.WalletUSD+price)
 	if err != nil {
 		log.Error(err)
 	}
 
-	err = uc.walletsRepo.CreateTransaction(ctx, user.ID, asset.ID, sellTransaction, transaction.Quantity, assetTicker.PriceUSD)
+	err = uc.walletsRepo.CreateTransaction(ctx, user.ID, asset.ID, sellTransaction, transaction.Quantity, ticker.PriceUSD)
 	if err != nil {
 		log.Error(err)
 	}
@@ -201,7 +201,7 @@ func (uc *walletsUseCase) SellAsset(ctx context.Context, user *models.User, tran
 	walletTicker := models.WalletTicker{
 		Symbol:    asset.Symbol,
 		Asset:     asset.Name,
-		PriceUSD:  assetTicker.PriceUSD,
+		PriceUSD:  ticker.PriceUSD,
 		Quantity:  transaction.Quantity,
 		TotalUSD:  price,
 		UpdatedAt: wallet.UpdatedAt,

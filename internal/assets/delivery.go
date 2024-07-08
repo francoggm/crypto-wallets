@@ -5,6 +5,7 @@ import (
 )
 
 type Handlers interface {
-	ListAllAssetsData() fiber.Handler
-	ListAssetData() fiber.Handler
+	GetAllAssetsData() fiber.Handler
+	GetAssetData() fiber.Handler
+	GetAssetHistoricalData() fiber.Handler
 }

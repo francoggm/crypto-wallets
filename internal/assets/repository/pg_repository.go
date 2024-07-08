@@ -4,6 +4,7 @@ import (
 	"context"
 	"github/francoggm/crypto-wallets/internal/assets"
 	"github/francoggm/crypto-wallets/internal/models"
+	"github/francoggm/crypto-wallets/pkg/utils"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
@@ -59,18 +60,40 @@ func (r *assetsRepository) GetAssetByName(ctx context.Context, assetName string)
 	return &asset, nil
 }
 
-func (r *assetsRepository) GetAssetTicker(ctx context.Context, asset *models.Asset) (*models.AssetTicker, error) {
+func (r *assetsRepository) GetAssetTicker(ctx context.Context, assetId int) (*models.Ticker, error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "assets.repository.GetAssetTicker")
 	defer span.Finish()
 
-	var at models.AssetTicker
-	at.Asset = *asset
+	var ticker models.Ticker
 
-	if err := r.db.GetContext(ctx, &at, getAssetTicker, at.ID); err != nil {
+	if err := r.db.GetContext(ctx, &ticker, getAssetTicker, assetId); err != nil {
 		return nil, err
 	}
 
-	return &at, nil
+	return &ticker, nil
+}
+
+func (r *assetsRepository) GetAssetHistoricalData(ctx context.Context, assetId int, interval models.IntervalTime) ([]*models.Ticker, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "assets.repository.GetAssetHistoricalData")
+	defer span.Finish()
+
+	var tickers []*models.Ticker
+	
+	rows, err := r.db.QueryContext(ctx, getAssetHistoricalData, assetId, utils.GetIntervalTimeString(interval))
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var ticker models.Ticker
+		if err := rows.Scan(&ticker.PriceUSD, &ticker.MarketCapUSD, &ticker.VolumeUSD, &ticker.Date); err != nil {
+			return nil, err
+		}
+
+		tickers = append(tickers, &ticker)
+	}
+
+	return tickers, nil
 }
 
 func (r *assetsRepository) SaveAssetTicker(ctx context.Context, assetTicker *models.AssetTicker) error {

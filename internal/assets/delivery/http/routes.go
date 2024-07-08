@@ -8,6 +8,7 @@ import (
 )
 
 func MapRoutes(gp fiber.Router, handlers assets.Handlers, mw *middlewares.MiddlewareManager) {
-	gp.Get("/", handlers.ListAllAssetsData())
-	gp.Get("/:asset", handlers.ListAssetData())
+	gp.Get("/", handlers.GetAllAssetsData())
+	gp.Get("/:asset", handlers.GetAssetData())
+	gp.Get("/:asset/history", handlers.GetAssetHistoricalData())
 }

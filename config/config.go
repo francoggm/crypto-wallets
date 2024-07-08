@@ -35,7 +35,7 @@ type Config struct {
 }
 
 func NewConfig() *Config {
-	tiEnv := os.Getenv("TICKERS_INTERVAL")
+	tiEnv := os.Getenv("TICKERS_INTERVAL_SECONDS")
 	ti, err := strconv.Atoi(tiEnv)
 	if err != nil {
 		// default value = 5 minutes
